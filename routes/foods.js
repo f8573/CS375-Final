@@ -1,0 +1,88 @@
+import express from "express";
+import Food from "../models/food.js";
+
+const router = express.Router();
+
+// GET all foods (with filtering, search, sorting, pagination)
+router.get("/", async (req, res) => {
+    try {
+        let query = {};
+
+        // Filter by restaurant name
+        if (req.query.restaurant) {
+            query.restName = req.query.restaurant;
+        }
+
+        // Search meal name
+        if (req.query.search) {
+            query.meal = { $regex: req.query.search, $options: "i" };
+        }
+
+        let foods = await Food.find(query);
+
+        // Sort by rating
+        if (req.query.sort) {
+            foods = foods.sort((a, b) => a.rating - b.rating);
+        }
+
+        // Pagination
+        let page = parseInt(req.query.page) || 1;
+        let limit = parseInt(req.query.limit) || foods.length;
+        let start = (page - 1) * limit;
+        let end = start + limit;
+
+        foods = foods.slice(start, end);
+
+        res.json(foods);
+
+    } catch (err) {
+        res.status(500).json({ error: "Server error" });
+    }
+});
+
+// GET one food
+router.get("/:id", async (req, res) => {
+    try {
+        let food = await Food.findById(req.params.id);
+        res.json(food);
+    } catch (err) {
+        res.status(500).json({ error: "Server error" });
+    }
+});
+
+// POST create food
+router.post("/", async (req, res) => {
+    try {
+        let newFood = new Food(req.body);
+        let saved = await newFood.save();
+        res.json(saved);
+    } catch (err) {
+        res.status(500).json({ error: "Error creating food" });
+    }
+});
+
+// PUT update food
+router.put("/:id", async (req, res) => {
+    try {
+        let updated = await Food.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+            { new: true }
+        );
+        res.json(updated);
+    } catch (err) {
+        res.status(500).json({ error: "Error updating food" });
+    }
+});
+
+// DELETE food
+router.delete("/:id", async (req, res) => {
+    try {
+        await Food.findByIdAndDelete(req.params.id);
+        res.json({ message: "Food deleted" });
+    } catch (err) {
+        res.status(500).json({ error: "Error deleting food" });
+    }
+});
+
+export default router;
