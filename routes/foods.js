@@ -3,6 +3,13 @@ import Food from "../models/food.js";
 
 const router = express.Router();
 
+// Middleware that runs for ALL routes in this router
+router.use((req, res, next) => {
+    console.log(`Food route: ${req.method} ${req.originalUrl}`);
+    console.log(`Time: ${new Date().toISOString()}`);
+    next();
+});
+
 // GET all foods (with filtering, search, sorting, pagination)
 router.get("/", async (req, res) => {
     try {

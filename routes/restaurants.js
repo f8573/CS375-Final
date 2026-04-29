@@ -3,6 +3,13 @@ import Restaurant from "../models/restaurant.js";
 
 const router = express.Router();
 
+// Middleware that runs for ALL routes in this router
+router.use((req, res, next) => {
+    console.log(`Restaurant route: ${req.method} ${req.originalUrl}`);
+    console.log(`Time: ${new Date().toISOString()}`);
+    next();
+});
+
 // GET all restaurants
 router.get("/", async (req, res) => {
     try {
