@@ -1,7 +1,7 @@
 import express from "express";
 import Restaurant from "../models/restaurant.js";
 
-const router = express.Router();
+export const router = express.Router();
 
 // Middleware that runs for ALL routes in this router
 router.use((req, res, next) => {
@@ -64,5 +64,3 @@ router.delete("/:id", async (req, res) => {
         res.status(500).json({ error: "Error deleting restaurant" });
     }
 });
-
-export default router;
