@@ -3,11 +3,12 @@ import Wishlist from "../models/wishlists.js";
 
 export const router = express.Router();
 
-// GET all wishlists (Handles Filtering and Sorting)
+// GET all wishlists (Handles Filtering, Sorting, and Populating Relationships)
 router.get("/", async (req, res) => {
     try {
-        // req.query handles filtering. sort() puts newest first.
-        let items = await Wishlist.find(req.query).sort({ addedDate: -1 });
+        let items = await Wishlist.find(req.query)
+            .populate("restName") // <--- This is the magic line!
+            .sort({ addedDate: -1 });
         res.json(items);
     } catch (err) {
         res.status(500).json({ error: "Server error" });
