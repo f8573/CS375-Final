@@ -10,7 +10,7 @@ router.use((req, res, next) => {
     next();
 });
 
-// GET all foods (with filtering, search, sorting, pagination)
+// GET all foods (with filtering, search, sorting, pagination, and population)
 router.get("/", async (req, res) => {
     try {
         let query = {};
@@ -25,7 +25,8 @@ router.get("/", async (req, res) => {
             query.meal = { $regex: req.query.search, $options: "i" };
         }
 
-        let foods = await Food.find(query);
+        // ADDED POPULATE HERE TO SHOW THE RELATIONSHIP
+        let foods = await Food.find(query).populate("restName");
 
         // Sort by rating
         if (req.query.sort) {
@@ -50,7 +51,8 @@ router.get("/", async (req, res) => {
 // GET one food
 router.get("/:id", async (req, res) => {
     try {
-        let food = await Food.findById(req.params.id);
+        // ADDED POPULATE HERE TO SHOW THE RELATIONSHIP
+        let food = await Food.findById(req.params.id).populate("restName");
         res.json(food);
     } catch (err) {
         res.status(500).json({ error: "Server error" });
