@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 
 import {router as foodRoutes} from "./routes/foods.js";
 import {router as restaurantRoutes} from "./routes/restaurants.js";
+import { router as wishlistRoutes } from "./routes/wishlists.js";
 
 const app = express();
 
@@ -33,6 +34,7 @@ app.use(logRequest);
 
 app.use("/api/meals", foodRoutes);
 app.use("/api/restaurants", restaurantRoutes);
+app.use("/api/wishlists", wishlistRoutes);
 
 // mongoose.connect("mongodb://127.0.0.1:27017/ratemeals");
 
