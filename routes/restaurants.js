@@ -13,7 +13,7 @@ router.use((req, res, next) => {
 // GET all restaurants
 router.get("/", async (req, res) => {
     try {
-        let data = await Restaurant.find();
+        let data = await Restaurant.find(req.query);
         res.json(data);
     } catch (err) {
         res.status(500).json({ error: "Server error" });
