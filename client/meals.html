@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- Page title shown in browser tab -->
+    <title>Meals</title>
+    <!-- Link to shared CSS file for styling -->
+    <link rel="stylesheet" href="/assets/styles.css">
+</head>
+
+<body>
+
+<!-- Main page header -->
+<h1>Meals Search Page</h1>
+
+<!-- ===== SEARCH INPUT ===== -->
+<!-- User types a keyword to search meals (example: burger) -->
+<p>Search Meal:</p>
+<input id="search" type="text" placeholder="example: burger"> 
+
+<!-- ===== RESTAURANT FILTER ===== -->
+<!-- User can filter meals by restaurant name -->
+<p>Restaurant:</p>
+<input id="restaurant" type="text" placeholder="example: McDonalds">
+
+<!-- ===== SORT OPTION ===== -->
+<!-- Allows user to sort meals by rating -->
+<p>Sort by Rating:</p>
+<select id="sort">
+    <option value="">No Sort</option>
+    <option value="true">Sort Low to High</option>
+</select>
+
+<!-- ===== ACTION BUTTONS ===== -->
+<!-- Calls API to get filtered/search results -->
+<button onclick="getMeals()">Search</button>
+
+<!-- Clears all inputs and reloads all meals -->
+<button onclick="clearFilters()">Clear</button>
+
+<hr>
+
+<!-- ===== RESULTS SECTION ===== -->
+<!-- JavaScript will display API results here -->
+<div id="results"></div>
+
+<!-- Link to JavaScript file that handles API requests -->
+<script src="./meals.js"></script>
+
+</body>
+</html>
