@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | RateMeals</title>
+    <link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body>
+    <main class="page">
+        <section class="card stack">
+            <div class="stack">
+                <h1>Dashboard</h1>
+                <p class="muted">This page verifies the stored JWT against <code>/api/auth/me</code>.</p>
+            </div>
+            <div id="message" aria-live="polite"></div>
+            <div id="user-card" class="stack"></div>
+            <div class="row">
+                <button id="logout-button" class="secondary" type="button">Logout</button>
+                <a href="/login.html">Back to login</a>
+            </div>
+        </section>
+    </main>
+    <script type="module">
+        import { getCurrentUser } from "./api/authApi.js";
+        import { getUser, logout } from "./auth/authService.js";
+        import { requireAuth } from "./auth/authGuards.js";
+
+        requireAuth();
+
+        const message = document.getElementById("message");
+        const userCard = document.getElementById("user-card");
+        const logoutButton = document.getElementById("logout-button");
+
+        function showMessage(text, type) {
+            message.className = type;
+            message.textContent = text;
+        }
+
+        function renderUser(user) {
+            userCard.innerHTML = `
+                <p><strong>Welcome, ${user.name}</strong></p>
+                <p>Email: ${user.email}</p>
+                <p>User ID: ${user._id}</p>
+            `;
+        }
+
+        const cachedUser = getUser();
+        if (cachedUser) {
+            renderUser(cachedUser);
+        }
+
+        try {
+            const { user } = await getCurrentUser();
+            renderUser(user);
+        } catch (error) {
+            showMessage(error.message || "Unable to load the current user.", "error");
+            window.setTimeout(() => {
+                window.location.href = "/login.html";
+            }, 800);
+        }
+
+        logoutButton.addEventListener("click", () => {
+            logout();
+            window.location.href = "/login.html";
+        });
+    </script>
+</body>
+</html>

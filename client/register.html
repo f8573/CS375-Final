@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | RateMeals</title>
+    <link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body>
+    <main class="page">
+        <section class="card stack">
+            <div class="stack">
+                <h1>Create account</h1>
+                <p class="muted">Register for a JWT-backed RateMeals session.</p>
+            </div>
+            <div id="message" aria-live="polite"></div>
+            <form id="register-form" class="stack">
+                <label>
+                    Name
+                    <input id="name" name="name" type="text" autocomplete="name" required>
+                </label>
+                <label>
+                    Email
+                    <input id="email" name="email" type="email" autocomplete="email" required>
+                </label>
+                <label>
+                    Password
+                    <input id="password" name="password" type="password" autocomplete="new-password" required>
+                </label>
+                <label>
+                    Confirm password
+                    <input id="confirm-password" name="confirm-password" type="password" autocomplete="new-password" required>
+                </label>
+                <button type="submit">Register</button>
+            </form>
+            <p>Already registered? <a href="/login.html">Go to login</a></p>
+        </section>
+    </main>
+    <script type="module">
+        import { registerUser } from "./api/authApi.js";
+        import { saveAuthData } from "./auth/authService.js";
+        import { redirectIfAuthenticated } from "./auth/authGuards.js";
+
+        redirectIfAuthenticated();
+
+        const form = document.getElementById("register-form");
+        const message = document.getElementById("message");
+
+        function showMessage(text, type) {
+            message.className = type;
+            message.textContent = text;
+        }
+
+        function isValidEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+
+        form.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            message.className = "";
+            message.textContent = "";
+
+            const name = document.getElementById("name").value.trim();
+            const email = document.getElementById("email").value.trim();
+            const password = document.getElementById("password").value;
+            const confirmPassword = document.getElementById("confirm-password").value;
+
+            if (!name) {
+                showMessage("Name is required.", "error");
+                return;
+            }
+
+            if (!email || !isValidEmail(email)) {
+                showMessage("Please enter a valid email address.", "error");
+                return;
+            }
+
+            if (!password || password.length < 6) {
+                showMessage("Password must be at least 6 characters.", "error");
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showMessage("Confirm password must match password.", "error");
+                return;
+            }
+
+            try {
+                const { token, user } = await registerUser({ name, email, password });
+                saveAuthData(token, user);
+                showMessage("Registration successful. Redirecting to dashboard...", "success");
+                window.setTimeout(() => {
+                    window.location.href = "/dashboard.html";
+                }, 600);
+            } catch (error) {
+                showMessage(error.message || "Unable to register right now.", "error");
+            }
+        });
+    </script>
+</body>
+</html>

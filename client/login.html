@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | RateMeals</title>
+    <link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body>
+    <main class="page">
+        <section class="card stack">
+            <div class="stack">
+                <h1>Log in</h1>
+                <p class="muted">Use your RateMeals credentials to continue.</p>
+            </div>
+            <div id="message" aria-live="polite"></div>
+            <form id="login-form" class="stack">
+                <label>
+                    Email
+                    <input id="email" name="email" type="email" autocomplete="email" required>
+                </label>
+                <label>
+                    Password
+                    <input id="password" name="password" type="password" autocomplete="current-password" required>
+                </label>
+                <button type="submit">Log in</button>
+            </form>
+            <p>No account yet? <a href="/register.html">Create one</a></p>
+        </section>
+    </main>
+    <script type="module">
+        import { loginUser } from "./api/authApi.js";
+        import { saveAuthData } from "./auth/authService.js";
+        import { redirectIfAuthenticated } from "./auth/authGuards.js";
+
+        redirectIfAuthenticated();
+
+        const form = document.getElementById("login-form");
+        const message = document.getElementById("message");
+
+        function showMessage(text, type) {
+            message.className = type;
+            message.textContent = text;
+        }
+
+        form.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            message.className = "";
+            message.textContent = "";
+
+            const email = document.getElementById("email").value.trim();
+            const password = document.getElementById("password").value;
+
+            if (!email || !password) {
+                showMessage("Please enter both email and password.", "error");
+                return;
+            }
+
+            try {
+                const { token, user } = await loginUser({ email, password });
+                saveAuthData(token, user);
+                showMessage("Login successful. Redirecting to dashboard...", "success");
+                window.setTimeout(() => {
+                    window.location.href = "/dashboard.html";
+                }, 600);
+            } catch (error) {
+                showMessage(error.message || "Unable to connect to server.", "error");
+            }
+        });
+    </script>
+</body>
+</html>

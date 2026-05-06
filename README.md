@@ -16,7 +16,7 @@ RateMeals is a RESTful API built with Node.js, Express, and MongoDB. It exposes 
    ```bash
    npm install
    ```
-2. Create a `.env` file from `.env.example` and set `MONGODB_URI`.
+2. Create a `.env` file from `.env.example` and set the values for your environment, including `JWT_SECRET`.
 3. Start the server:
    ```bash
    npm start
@@ -55,6 +55,8 @@ Query support includes:
 - `POST /api/wishlists`
 - `PUT /api/wishlists/:id`
 - `DELETE /api/wishlists/:id`
+
+Authentication details are documented in [AUTHENTICATION.md](C:/Users/James/Downloads/CS375-Final/AUTHENTICATION.md).
 
 ## Notes
 

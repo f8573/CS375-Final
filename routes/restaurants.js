@@ -1,5 +1,6 @@
 import express from "express";
 import Restaurant from "../models/restaurant.js";
+import { protect } from "../middleware/authMiddleware.js";
 
 export const router = express.Router();
 
@@ -31,7 +32,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // POST
-router.post("/", async (req, res) => {
+router.post("/", protect, async (req, res) => {
     try {
         let newItem = new Restaurant(req.body);
         let saved = await newItem.save();
@@ -42,7 +43,7 @@ router.post("/", async (req, res) => {
 });
 
 // PUT
-router.put("/:id", async (req, res) => {
+router.put("/:id", protect, async (req, res) => {
     try {
         let updated = await Restaurant.findByIdAndUpdate(
             req.params.id,
@@ -56,7 +57,7 @@ router.put("/:id", async (req, res) => {
 });
 
 // DELETE
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", protect, async (req, res) => {
     try {
         await Restaurant.findByIdAndDelete(req.params.id);
         res.json({ message: "Deleted" });

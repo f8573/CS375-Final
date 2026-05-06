@@ -1,5 +1,6 @@
 import express from "express";
 import Wishlist from "../models/wishlists.js";
+import { protect } from "../middleware/authMiddleware.js";
 
 export const router = express.Router();
 
@@ -16,7 +17,7 @@ router.get("/", async (req, res) => {
 });
 
 // POST to wishlist
-router.post("/", async (req, res) => {
+router.post("/", protect, async (req, res) => {
     try {
         let newItem = new Wishlist(req.body);
         let saved = await newItem.save();
@@ -27,7 +28,7 @@ router.post("/", async (req, res) => {
 });
 
 // PUT (Update) a wishlist item
-router.put("/:id", async (req, res) => {
+router.put("/:id", protect, async (req, res) => {
     try {
         // { new: true } tells Mongoose to return the updated item, not the old one
         let updated = await Wishlist.findByIdAndUpdate(req.params.id, req.body, { new: true });
@@ -38,7 +39,7 @@ router.put("/:id", async (req, res) => {
 });
 
 // DELETE from wishlist
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", protect, async (req, res) => {
     try {
         await Wishlist.findByIdAndDelete(req.params.id);
         res.json({ message: "Removed from wishlist" });

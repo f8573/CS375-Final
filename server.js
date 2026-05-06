@@ -1,7 +1,9 @@
 import "dotenv/config";
+import cors from "cors";
 import express from "express";
 import mongoose from "mongoose";
 
+import { router as authRoutes } from "./routes/auth.js";
 import { router as foodRoutes } from "./routes/foods.js";
 import { router as restaurantRoutes } from "./routes/restaurants.js";
 import { router as wishlistRoutes } from "./routes/wishlists.js";
@@ -10,6 +12,7 @@ const app = express();
 
 const PORT = process.env.PORT || 3000;
 const MONGODB_URI = process.env.MONGODB_URI;
+const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:5173";
 
 async function connectDB() {
     try {
@@ -32,9 +35,14 @@ const logRequest = function(req, res, next) {
     next();
 };
 
+app.use(cors({
+    origin: CLIENT_URL,
+    credentials: true
+}));
 app.use(express.json());
 app.use(logRequest);
 
+app.use("/api/auth", authRoutes);
 app.use("/api/meals", foodRoutes);
 app.use("/api/restaurants", restaurantRoutes);
 app.use("/api/wishlists", wishlistRoutes);
